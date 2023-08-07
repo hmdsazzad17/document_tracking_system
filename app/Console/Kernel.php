@@ -12,7 +12,8 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule): void
     {
-        // $schedule->command('inspire')->hourly();
+        $schedule->command('documents:generate-diffs')->dailyAt('12:05');
+
     }
 
     /**
@@ -21,7 +22,7 @@ class Kernel extends ConsoleKernel
     protected function commands(): void
     {
         $this->load(__DIR__.'/Commands');
-
+        Commands\GenerateDocumentDiffs::class;
         require base_path('routes/console.php');
     }
 }
