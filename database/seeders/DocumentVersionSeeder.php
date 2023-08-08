@@ -13,6 +13,6 @@ class DocumentVersionSeeder extends Seeder
      */
     public function run(): void
     {
-        DocumentVersion::factory()->count(2500)->create();
+        DocumentVersion::factory()->count(5)->create();
     }
 }

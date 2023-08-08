@@ -26,7 +26,7 @@ class GenerateDocumentDiffs extends Command
 
             foreach ($documentUsers as $documentUser) {
                 $document = $documentUser->document;
-                $this->info('test.'.$document);
+
                 if ($document->status === 'inactive' || $document->current_version <= $documentUser->last_viewed_version) {
                     continue;
                 }
@@ -50,16 +50,21 @@ class GenerateDocumentDiffs extends Command
                     continue;
                 }
 
+                //leastest body conent
+                $latestVersion->body_content = json_decode($latestVersion->body_content);
+
+                $lastesHtmlContent = $latestVersion->body_content->introduction.$latestVersion->body_content->facts.$latestVersion->body_content->summary;
+
                 // Calculate diff logic for body_content and tags_content
-                $bodyDiff = $this->calculateDiff($documentUser->last_viewed_version, json_decode($latestVersion->body_content),$documentUser->document_id);
-                $tagsDiff = $this->calculateDiff($documentUser->last_viewed_version, json_decode($latestVersion->tags_content),$documentUser->document_id);
+                $bodyDiff = $this->calculateDiff($documentUser->last_viewed_version, $lastesHtmlContent,$documentUser->document_id);
+                $tagsDiff = $this->calculateDiff($documentUser->last_viewed_version, $lastesHtmlContent,$documentUser->document_id);
 
                 // Store the diffs in the database
                 DocumentDiff::create([
                     'document_user_id' => $documentUser->id,
                     'version' => $latestVersion->version,
-                    'body_diff' => json_encode($bodyDiff),
-                    'tags_diff' => json_encode($tagsDiff),
+                    'body_diff' => $bodyDiff,
+                    'tags_diff' => $tagsDiff,
                 ]);
 
 
@@ -80,7 +85,7 @@ class GenerateDocumentDiffs extends Command
         $previousContent = $this->getContentFromVersion($document_id, $fromVersion);
 
         // Initialize the DiffHelper
-        // $diffHelper = new Jfcherng\Diff\DiffHelper;
+        // $diffHelper = new DiffHelper();
 
         // Calculate the diff
         $diffOptions = [
@@ -91,8 +96,14 @@ class GenerateDocumentDiffs extends Command
         //     new HtmlString($toContent),
         //     $diffOptions
         // );
-        $diff = DiffHelper::calculate(new HtmlString($previousContent), new HtmlString($toContent),$diffOptions);
-
+        $old = json_encode(["content" => "this is previous"]);
+        $new = json_encode(["content" => "this is new"]);
+        $diff = DiffHelper::calculate( $previousContent, $toContent,'Json');
+        // $diff = $diffHelper->getDiff(
+        //     new HtmlString($previousContent),
+        //     new HtmlString($content),
+        //     $diffOptions
+        // );
         return $diff;
     }
 
@@ -101,11 +112,11 @@ class GenerateDocumentDiffs extends Command
         $version = DocumentVersion::where('document_id', $documentId)
             ->where('version', $version)
             ->first();
-
+        $version->body_content = json_decode($version->body_content);
         if ($version) {
-            return $version->body_content['introduction'] . // Fetch content sections as needed
-                $version->body_content['facts'] .
-                $version->body_content['summary'];
+            return $version->body_content->introduction . // Fetch content sections as needed
+                $version->body_content->facts .
+                $version->body_content->summary;
         }
 
         return 'no changes';

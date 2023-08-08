@@ -18,7 +18,7 @@ class DocumentVersionFactory extends Factory
     public function definition(): array
     {
         $documentIds = Document::take(500)->pluck('id')->toArray();
-        $versions = [1, 2, 3,4,5,6,7,8,9,10]; // Example last viewed versions
+        $versions = 100; // Example last viewed versions
         $bodyContent = [
             'introduction' => '<ul><li>Federal Government\'s superannuation reforms in the 2020.</li></ul>',
             'facts' => '<ul><li>Federal Government\'s superannuation reforms in the 2020.</li></ul>',
@@ -29,7 +29,7 @@ class DocumentVersionFactory extends Factory
 
         return [
             'document_id' => $this->faker->randomElement($documentIds),
-            'version' => $this->faker->randomElement($versions), // Initial version
+            'version' => $versions++, // Initial version
             'body_content' => json_encode($bodyContent),
             'tags_content' => json_encode($tagsContent),
         ];
