@@ -8,41 +8,31 @@
                         <table class="table table--light style--two">
                             <thead>
                                 <tr>
-                                    <th>@lang('Icon')</th>
-                                    <th>@lang('Level')</th>
-                                    <th>@lang('Name')</th>
-                                    <th>@lang('Minimum Invest')</th>
-                                    <th>@lang('Bonus')</th>
-                                    <th>@lang('Status')</th>
-                                    <th>@lang('Action')</th>
+                                    <th>SL</th>
+                                    <th>Title</th>
+                                    <th>Description</th>
+                                    <th>Tags</th>
+                                    <th>Status</th>
+                                    <th>Action</th>
                                 </tr>
                             </thead>
                             <tbody>
-                                @forelse($userRankings as $userRanking)
+                                @forelse($data as $singleData)
                                     <tr>
-                                        <td><img src="{{ getImage(getFilePath('userRanking') . '/' . $userRanking->icon, getFileSize('userRanking')) }}" alt=""></td>
-                                        <td>{{ __($userRanking->level) }}</td>
-                                        <td>{{ __($userRanking->name) }}</td>
-                                        <td>{{ $general->cur_sym }}{{ showAmount($userRanking->minimum_invest) }}</td>
-                                        <td>{{ $general->cur_sym }}{{ showAmount($userRanking->bonus) }}</td>
+                                        <td>-</td>
+                                        <td>{{ $singleData->title }}</td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
                                         <td>
-                                            @php
-                                                echo $userRanking->statusBadge;
-                                            @endphp
-                                        </td>
-                                        <td>
-                                            <button class="btn btn-sm btn-outline--primary editBtn me-1" data-icon="{{ getImage(getFilePath('userRanking') . '/' . $userRanking->icon, getFileSize('userRanking')) }}" data-ranking="{{ $userRanking }}"
-                                                data-action="{{ route('admin.plan.update', $userRanking->id) }}"><i class="las la-pen"></i>@lang('Edit')</button>
-                                            @if ($userRanking->status)
-                                                <button class="btn btn-sm btn-outline--danger confirmationBtn" data-question="@lang('Are you sure to disable this ranking?')" data-action="{{ route('admin.ranking.status', $userRanking->id) }}"><i class="las la-eye-slash"></i>@lang('Disable')</button>
-                                            @else
-                                                <button class="btn btn-sm btn-outline--success confirmationBtn" data-question="@lang('Are you sure to enable this ranking?')" data-action="{{ route('admin.ranking.status', $userRanking->id) }}"><i class="las la-eye"></i>@lang('Enable')</button>
-                                            @endif
+                                            <button class="btn btn-sm btn-outline--primary editBtn me-1" data-icon="" data-ranking="{{ $singleData }}"
+                                                data-action="{{ route('ranking.store', $singleData->id) }}"><i class="las la-pen"></i>@lang('Edit')</button>
+
                                         </td>
                                     </tr>
                                 @empty
                                     <tr>
-                                        <td class="text-muted text-center" colspan="100%">{{ __($emptyMessage) }}</td>
+                                        <td class="text-muted text-center" colspan="100%"></td>
                                     </tr>
                                 @endforelse
                             </tbody>
@@ -62,7 +52,7 @@
                         <i class="las la-times"></i>
                     </button>
                 </div>
-                <form action="{{ route('admin.ranking.store') }}" method="post" enctype="multipart/form-data">
+                <form action="{{ route('ranking.store') }}" method="post" enctype="multipart/form-data">
                     @csrf
                     <div class="modal-body">
                         <div class="row">
@@ -79,7 +69,7 @@
                                             <div class="avatar-edit">
                                                 <input type="file" class="profilePicUpload d-none" name="icon" id="profilePicUpload1" accept=".png, .jpg, .jpeg" required>
                                                 <label for="profilePicUpload1" class="bg--success mt-3">@lang('Upload Image')</label>
-                                                <small class="mt-2">@lang('Supported files'): <b>@lang('png'), @lang('jpeg'), @lang('jpg').</b> @lang('Image will be resized into ') {{ getFileSize('userRanking') }} @lang('px')</small>
+
                                             </div>
                                         </div>
                                     </div>
@@ -104,14 +94,12 @@
                                     <label>@lang('Minimum Invest')</label>
                                     <div class="input-group">
                                         <input type="number" step="any" name="minimum_invest" min="0" class="form-control" required>
-                                        <span class="input-group-text">{{ $general->cur_text }}</span>
                                     </div>
                                 </div>
                                 <div class="form-group">
                                     <label>@lang('Team Minimum Invest')</label>
                                     <div class="input-group">
                                         <input type="number" step="any" name="team_minimum_invest" min="0" class="form-control" required>
-                                        <span class="input-group-text">{{ $general->cur_text }}</span>
                                     </div>
                                 </div>
                                 <div class="form-group">
@@ -122,7 +110,6 @@
                                     <label>@lang('Bonus')</label>
                                     <div class="input-group">
                                         <input type="number" step="any" name="bonus" min="0" class="form-control" required>
-                                        <span class="input-group-text">{{ $general->cur_text }}</span>
                                     </div>
                                 </div>
                             </div>
@@ -135,11 +122,11 @@
             </div>
         </div>
     </div>
-    <x-confirmation-modal />
+    {{-- <x-confirmation-modal /> --}}
 @endsection
 
 @push('breadcrumb-plugins')
-    <button class="btn btn-outline--primary btn-sm modalShow addBtn" data-icon="{{ getImage(null, getFileSize('userRanking')) }}"><i class="las la-plus"></i> @lang('Add New')</button>
+    <button class="btn btn-outline--primary btn-sm modalShow addBtn" data-icon=""><i class="las la-plus"></i> @lang('Add New')</button>
 @endpush
 
 @push('style')
@@ -155,7 +142,7 @@
         (function($) {
             "use strict"
             let modal = $('#rankingModal');
-            let action = `{{ route('admin.ranking.store') }}`;
+            let action = `{{ route('ranking.store') }}`;
 
             $('.addBtn').on('click', function() {
                 modal.find('form').attr('action', action);

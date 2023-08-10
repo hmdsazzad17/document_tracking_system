@@ -14,6 +14,27 @@
                     </a>
                 </li>
 
+                <li class="sidebar-menu-item ">
+                    <a href="{{ route('dashboard') }}" class="nav-link ">
+                        <i class="menu-icon las la-home"></i>
+                        <span class="menu-title">Add Documents</span>
+                    </a>
+                </li>
+
+                <li class="sidebar-menu-item ">
+                    <a href="{{ route('dashboard') }}" class="nav-link ">
+                        <i class="menu-icon las la-home"></i>
+                        <span class="menu-title">Document List</span>
+                    </a>
+                </li>
+
+                <li class="sidebar-menu-item ">
+                    <a href="{{ route('ranking.docList') }}" class="nav-link ">
+                        <i class="menu-icon las la-home"></i>
+                        <span class="menu-title">User Doccuments</span>
+                    </a>
+                </li>
+
 
             </ul>
             <div class="text-center mb-3 text-uppercase">
