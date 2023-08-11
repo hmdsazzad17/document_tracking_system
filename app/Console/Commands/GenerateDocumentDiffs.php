@@ -42,7 +42,7 @@ class GenerateDocumentDiffs extends Command
 
                 // Check if a diff already exists for this user and latest version
                 $existingDiff = DocumentDiff::where([
-                    'document_user_id' => $documentUser->id,
+                    'document_user_id' => $documentUser->user_id,
                     'version' => $latestVersion->version,
                 ])->first();
 
@@ -61,7 +61,7 @@ class GenerateDocumentDiffs extends Command
 
                 // Store the diffs in the database
                 DocumentDiff::create([
-                    'document_user_id' => $documentUser->id,
+                    'document_user_id' => $documentUser->user_id,
                     'version' => $latestVersion->version,
                     'body_diff' => $bodyDiff,
                     'tags_diff' => $tagsDiff,
